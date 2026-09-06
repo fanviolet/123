@@ -29,6 +29,7 @@ jobs:
           echo "176eaa33b13dc5f252c8b1e1d5a0ff05d5e0c31bfb277bf242fd3019116b1514  highstack3d/tools/game.part05.b64" | sha256sum -c -
           cat highstack3d/tools/game.part0{1,2,3,4,5}.b64 | tr -d '[:space:]' | base64 -d | gzip -dc > highstack3d/scripts/game.gd
           echo "68658f634f5ad46a3f3b51261a3255e6f30ed8d98ad6a66775d07b321b25cdb2  highstack3d/scripts/game.gd" | sha256sum -c -
+          python highstack3d/tools/ci_patch.py
           python -m pip install --disable-pip-version-check --quiet trimesh pillow numpy
           python highstack3d/tools/generate_assets.py
           test -s highstack3d/assets/models/mascot_blox.glb
@@ -55,6 +56,13 @@ jobs:
           godot-version: '4.7.2'
           godot-channel: stable
           working-directory: highstack3d
+
+      - name: Native scene smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 8 godot --headless --path highstack3d --quit-after 5 || code=$?
+          if [ "${code:-0}" -ne 0 ] && [ "${code:-0}" -ne 124 ]; then exit "$code"; fi
 
       - name: Inspect APK
         shell: bash

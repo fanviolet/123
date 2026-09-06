@@ -22,7 +22,12 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p highstack3d/scripts highstack3d/assets/models highstack3d/assets/icons highstack3d/build
-          tr -d '[:space:]' < highstack3d/tools/game.gd.gz.b64 | base64 -d | gzip -dc > highstack3d/scripts/game.gd
+          echo "773d84e4123f5ba20e1c4e93502b19df78070023768b46dcf1c9a5581951cd00  highstack3d/tools/game.part01.b64" | sha256sum -c -
+          echo "7bcfd5185fdb5b5600fd246302eb5fcfba8e6a1688aa2be4bce68bd6d56bb660  highstack3d/tools/game.part02.b64" | sha256sum -c -
+          echo "a51204a4f0d55a114f5bca51f1aa5f532a484993bbbcd2148e133c5d4e3a00c7  highstack3d/tools/game.part03.b64" | sha256sum -c -
+          echo "3d6d7e2e83b49135a943d9821ab718df717e8bbbf98f418b58b2394d7082e59c  highstack3d/tools/game.part04.b64" | sha256sum -c -
+          echo "176eaa33b13dc5f252c8b1e1d5a0ff05d5e0c31bfb277bf242fd3019116b1514  highstack3d/tools/game.part05.b64" | sha256sum -c -
+          cat highstack3d/tools/game.part0{1,2,3,4,5}.b64 | tr -d '[:space:]' | base64 -d | gzip -dc > highstack3d/scripts/game.gd
           echo "68658f634f5ad46a3f3b51261a3255e6f30ed8d98ad6a66775d07b321b25cdb2  highstack3d/scripts/game.gd" | sha256sum -c -
           python -m pip install --disable-pip-version-check --quiet trimesh pillow numpy
           python highstack3d/tools/generate_assets.py
@@ -65,6 +70,7 @@ jobs:
         shell: bash
         run: |
           rm -f highstack3d/highstack-test.keystore
+          rm -f highstack3d/tools/game.gd.gz.b64 highstack3d/tools/game.part*.b64
           zip -qr HighStack3D-Native3D-Source.zip highstack3d -x 'highstack3d/android/*' 'highstack3d/.godot/*' 'highstack3d/build/*'
 
       - uses: actions/upload-artifact@v4
